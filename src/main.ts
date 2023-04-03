@@ -35,16 +35,31 @@ function checkFileExists(file: string) {
     .catch(() => false);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-fs.watchFile(src, async (curr, prev) => {
+let counter = 1;
+
+// eslint-disable-next-line @typescript-eslint/no-shadow
+async function copyIfNeeded(src: string, dest: string) {
   if (await checkFileExists(src)) {
+    await fs.promises.copyFile(src, dest);
+    log(`Updated - ${counter++}`);
+    return true;
+  }
+  return false;
+}
+
+try {
+  await copyIfNeeded(src, dest);
+
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  fs.watchFile(src, async () => {
     try {
-      log(`${prev.mtime.toTimeString()} -> ${curr.mtime.toTimeString()}`);
-      await fs.promises.copyFile(src, dest);
+      await copyIfNeeded(src, dest);
     } catch (err) {
       logError(err);
     }
-  }
-});
+  });
 
-log(`Started watching ${src}...`);
+  log(`Started watching ${src}...`);
+} catch (err) {
+  logError(err);
+}
