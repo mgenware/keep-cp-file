@@ -1,7 +1,7 @@
 {
   "name": "keep-cp-file",
-  "version": "0.0.0",
-  "description": "__DESCRIPTION__",
+  "version": "1.0.1",
+  "description": "Watch and copy a file",
   "type": "module",
   "exports": "./dist/main.js",
   "types": "./dist/main.d.ts",
